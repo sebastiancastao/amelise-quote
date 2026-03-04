@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useRef } from "react";
 
 const RATE = 11;
 
@@ -206,6 +206,30 @@ const totalHours = sections.reduce((s, sec) => s + sec.items.reduce((a, i) => a 
 
 export default function AmeliseQuote() {
   const [openId, setOpenId] = useState(null);
+  const [downloading, setDownloading] = useState(false);
+  const contentRef = useRef(null);
+
+  const handleDownload = async () => {
+    setDownloading(true);
+    try {
+      const { default: html2canvas } = await import("html2canvas");
+      const { default: jsPDF } = await import("jspdf");
+      const canvas = await html2canvas(contentRef.current, {
+        scale: 2,
+        backgroundColor: "#000000",
+        useCORS: true,
+        logging: false,
+      });
+      const imgData = canvas.toDataURL("image/png");
+      const pw = canvas.width / 2;
+      const ph = canvas.height / 2;
+      const pdf = new jsPDF({ orientation: "portrait", unit: "px", format: [pw, ph] });
+      pdf.addImage(imgData, "PNG", 0, 0, pw, ph);
+      pdf.save("amelise-quote.pdf");
+    } finally {
+      setDownloading(false);
+    }
+  };
 
   return (
     <>
@@ -464,14 +488,47 @@ export default function AmeliseQuote() {
           margin-top: 4px;
           letter-spacing: -0.01em;
         }
+
+        .download-btn {
+          display: inline-flex;
+          align-items: center;
+          gap: 7px;
+          margin-bottom: 48px;
+          padding: 9px 18px;
+          background: transparent;
+          border: 1px solid #2d2d2f;
+          border-radius: 20px;
+          color: #aeaeb2;
+          font-family: inherit;
+          font-size: 12px;
+          font-weight: 400;
+          letter-spacing: -0.01em;
+          cursor: pointer;
+          transition: border-color 0.15s, color 0.15s;
+        }
+        .download-btn:hover:not(:disabled) {
+          border-color: #48484a;
+          color: #f5f5f7;
+        }
+        .download-btn:disabled {
+          opacity: 0.4;
+          cursor: default;
+        }
       `}</style>
 
-      <div className="root">
+      <div className="root" ref={contentRef}>
         <div className="wrap">
 
           <p className="eyebrow">Development Proposal · V1 MVP</p>
           <h1 className="title">Amelise</h1>
           <p className="subtitle">Smart Daily Skin Guidance · iOS + Android · 3 months</p>
+
+          <button className="download-btn" onClick={handleDownload} disabled={downloading}>
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M6.5 1v7.5M3.5 6l3 3 3-3M1.5 10.5h10" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+            {downloading ? "Generating…" : "Download PDF"}
+          </button>
 
           <div className="totals">
             <div className="total-cell">
