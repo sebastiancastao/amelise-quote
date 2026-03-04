@@ -1,5 +1,5 @@
 "use client";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 
 const RATE = 11;
 
@@ -211,32 +211,38 @@ export default function AmeliseQuote() {
   const contentRef = useRef(null);
   const btnRef = useRef(null);
 
-  const handleDownload = async () => {
+  const handleDownload = () => {
     setDownloading(true);
-    setPdfMode(true);
     if (btnRef.current) btnRef.current.style.display = "none";
-    await new Promise((r) => setTimeout(r, 150));
-    try {
-      const { default: html2canvas } = await import("html2canvas");
-      const { default: jsPDF } = await import("jspdf");
-      const canvas = await html2canvas(contentRef.current, {
-        scale: 2,
-        backgroundColor: "#000000",
-        useCORS: true,
-        logging: false,
-      });
-      const imgData = canvas.toDataURL("image/png");
-      const pw = canvas.width / 2;
-      const ph = canvas.height / 2;
-      const pdf = new jsPDF({ orientation: "portrait", unit: "px", format: [pw, ph] });
-      pdf.addImage(imgData, "PNG", 0, 0, pw, ph);
-      pdf.save("amelise-quote.pdf");
-    } finally {
-      if (btnRef.current) btnRef.current.style.display = "";
-      setPdfMode(false);
-      setDownloading(false);
-    }
+    setPdfMode(true);
   };
+
+  useEffect(() => {
+    if (!pdfMode) return;
+    const capture = async () => {
+      try {
+        const { default: html2canvas } = await import("html2canvas");
+        const { default: jsPDF } = await import("jspdf");
+        const canvas = await html2canvas(contentRef.current, {
+          scale: 2,
+          backgroundColor: "#000000",
+          useCORS: true,
+          logging: false,
+        });
+        const imgData = canvas.toDataURL("image/png");
+        const pw = canvas.width / 2;
+        const ph = canvas.height / 2;
+        const pdf = new jsPDF({ orientation: "portrait", unit: "px", format: [pw, ph] });
+        pdf.addImage(imgData, "PNG", 0, 0, pw, ph);
+        pdf.save("amelise-quote.pdf");
+      } finally {
+        if (btnRef.current) btnRef.current.style.display = "";
+        setPdfMode(false);
+        setDownloading(false);
+      }
+    };
+    capture();
+  }, [pdfMode]);
 
   return (
     <>
