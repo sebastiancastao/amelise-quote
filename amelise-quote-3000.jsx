@@ -200,6 +200,58 @@ const sections = [
       { task: "Google Play — screenshots + metadata + submission", hours: 3 },
     ],
   },
+  {
+    id: "16", title: "Weather & Environmental Factors",
+    items: [
+      { task: "Weather API integration (OpenWeather or equivalent)", hours: 1 },
+      { task: "Backend: fetch + cache weather data by user location", hours: 1 },
+      { task: "Location permission handling — iOS + Android", hours: 1 },
+      { task: "UV index, humidity, temperature data model", hours: 1 },
+      { task: "Weather factor integration into daily plan rules", hours: 2 },
+      { task: "Seasonal behavior rules (summer / winter skin adjustments)", hours: 1 },
+      { task: "Weather context display on morning check-in screen", hours: 1 },
+    ],
+  },
+  {
+    id: "17", title: "Long-Term Skin Pattern Tracking",
+    items: [
+      { task: "Long-term tracking DB schema (weekly + monthly aggregates)", hours: 1 },
+      { task: "Trend tracking service (weekly + monthly aggregation)", hours: 2 },
+      { task: "Irritation trend detection across weeks", hours: 1 },
+      { task: "Product tolerance cycle tracking", hours: 1 },
+      { task: "Hydration impact aggregation service", hours: 1 },
+      { task: "Long-term analytics API endpoints", hours: 1 },
+      { task: "Trend insights screen UI", hours: 2 },
+    ],
+  },
+  {
+    id: "18", title: "Skin Progress Timeline",
+    items: [
+      { task: "Timeline DB queries — baseline vs current photos", hours: 1 },
+      { task: "Build get-progress-timeline API endpoint", hours: 1 },
+      { task: "Photo comparison UI (side-by-side slider)", hours: 2 },
+      { task: "Monthly skin changes summary screen", hours: 1 },
+    ],
+  },
+  {
+    id: "19", title: "Lifestyle Pattern Insights",
+    items: [
+      { task: "Long-term lifestyle data DB aggregation queries", hours: 1 },
+      { task: "Sleep / alcohol / stress trend aggregation (monthly view)", hours: 2 },
+      { task: "Diet trigger tracking schema + logic", hours: 2 },
+      { task: "Lifestyle pattern insights screen UI", hours: 2 },
+    ],
+  },
+  {
+    id: "20", title: "Skin Confidence & Mindset Layer",
+    items: [
+      { task: "Mindset content DB table + seed encouragement messages", hours: 1 },
+      { task: "Habit reinforcement trigger logic (milestone-based)", hours: 1 },
+      { task: "Encouragement message delivery rules", hours: 1 },
+      { task: "Mindset prompt UI components (inline cards)", hours: 1 },
+      { task: "Progress milestone celebration screens", hours: 1 },
+    ],
+  },
 ];
 
 const totalHours = sections.reduce((s, sec) => s + sec.items.reduce((a, i) => a + i.hours, 0), 0);
@@ -594,10 +646,9 @@ export default function AmeliseQuote() {
 
           <div className="footer">
             <div>
-              <div className="footer-brand">Amelise MVP</div>
+              <div className="footer-brand">Amelise</div>
               <div className="footer-note">
-                V1 Scope Only · No Weather Integration<br />
-                No Advanced Analytics · No Long-Term Pattern Tracking
+                Full Scope · iOS + Android<br />
               </div>
             </div>
             <div className="footer-right">
