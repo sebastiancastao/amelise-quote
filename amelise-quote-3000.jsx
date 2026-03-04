@@ -206,11 +206,16 @@ const totalHours = sections.reduce((s, sec) => s + sec.items.reduce((a, i) => a 
 
 export default function AmeliseQuote() {
   const [openId, setOpenId] = useState(null);
+  const [pdfMode, setPdfMode] = useState(false);
   const [downloading, setDownloading] = useState(false);
   const contentRef = useRef(null);
+  const btnRef = useRef(null);
 
   const handleDownload = async () => {
     setDownloading(true);
+    setPdfMode(true);
+    if (btnRef.current) btnRef.current.style.display = "none";
+    await new Promise((r) => setTimeout(r, 150));
     try {
       const { default: html2canvas } = await import("html2canvas");
       const { default: jsPDF } = await import("jspdf");
@@ -227,6 +232,8 @@ export default function AmeliseQuote() {
       pdf.addImage(imgData, "PNG", 0, 0, pw, ph);
       pdf.save("amelise-quote.pdf");
     } finally {
+      if (btnRef.current) btnRef.current.style.display = "";
+      setPdfMode(false);
       setDownloading(false);
     }
   };
@@ -523,12 +530,14 @@ export default function AmeliseQuote() {
           <h1 className="title">Amelise</h1>
           <p className="subtitle">Smart Daily Skin Guidance · iOS + Android · 3 months</p>
 
-          <button className="download-btn" onClick={handleDownload} disabled={downloading}>
-            <svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M6.5 1v7.5M3.5 6l3 3 3-3M1.5 10.5h10" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-            {downloading ? "Generating…" : "Download PDF"}
-          </button>
+          <span ref={btnRef}>
+            <button className="download-btn" onClick={handleDownload} disabled={downloading}>
+              <svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M6.5 1v7.5M3.5 6l3 3 3-3M1.5 10.5h10" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+              {downloading ? "Generating…" : "Download PDF"}
+            </button>
+          </span>
 
           <div className="totals">
             <div className="total-cell">
@@ -547,7 +556,7 @@ export default function AmeliseQuote() {
 
           <div>
             {sections.map((sec) => {
-              const isOpen = openId === sec.id;
+              const isOpen = pdfMode || openId === sec.id;
               const secHours = sec.items.reduce((a, i) => a + i.hours, 0);
               return (
                 <div className="section-row" key={sec.id}>
